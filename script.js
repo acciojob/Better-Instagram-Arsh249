@@ -1,32 +1,35 @@
-document.addEventListener('DOMContentLoaded', (event) => {
-  const draggables = document.querySelectorAll('.image');
-  let draggedElement = null;
+const draggables = document.querySelectorAll('.draggable');
+let draggedElement = null;
 
-  draggables.forEach(draggable => {
-    draggable.addEventListener('dragstart', (e) => {
-      draggedElement = e.target;
-      e.target.classList.add('selected');
-    });
-
-    draggable.addEventListener('dragend', (e) => {
-      e.target.classList.remove('selected');
-    });
-
-    draggable.addEventListener('dragover', (e) => {
-      e.preventDefault();
-    });
-
-    draggable.addEventListener('drop', (e) => {
-      e.preventDefault();
-      if (draggedElement && draggedElement !== e.target) {
-        swapImages(draggedElement, e.target);
-      }
-    });
-  });
-
-  function swapImages(el1, el2) {
-    const tempBackground = el1.style.backgroundImage;
-    el1.style.backgroundImage = el2.style.backgroundImage;
-    el2.style.backgroundImage = tempBackground;
-  }
+// Add event listeners for drag and drop
+draggables.forEach(draggable => {
+    draggable.addEventListener('dragstart', handleDragStart);
+    draggable.addEventListener('dragover', handleDragOver);
+    draggable.addEventListener('drop', handleDrop);
+    draggable.addEventListener('dragend', handleDragEnd);
 });
+
+function handleDragStart(event) {
+    draggedElement = event.target; // Store the dragged element
+    event.target.style.opacity = '0.5';
+}
+
+function handleDragOver(event) {
+    event.preventDefault(); // Prevent default to allow drop
+}
+
+function handleDrop(event) {
+    event.preventDefault(); // Prevent default action
+
+    if (draggedElement !== this) {
+        // Swap the background images of the dragged and dropped elements
+        const draggedStyle = draggedElement.style.backgroundImage;
+        draggedElement.style.backgroundImage = this.style.backgroundImage;
+        this.style.backgroundImage = draggedStyle;
+    }
+}
+
+function handleDragEnd(event) {
+    event.target.style.opacity = '1'; // Reset the opacity
+    draggedElement = null; // Clear the dragged element
+}
